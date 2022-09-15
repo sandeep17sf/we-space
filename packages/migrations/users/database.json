@@ -1,0 +1,23 @@
+{
+    "defaultEnv": "master",
+    "master": {
+      "driver": "pg",
+      "host": {
+        "ENV": "USERS_DB_HOST"
+      },
+      "port": {
+        "ENV": "USERS_DB_PORT"
+      },
+      "user": {
+        "ENV": "USERS_DB_USER"
+      },
+      "password": {
+        "ENV": "USERS_DB_PASSWORD"
+      },
+      "database": {
+        "ENV": "USERS_DB_DATABASE"
+      }
+    },
+    "sql-file": true
+  }
+  
