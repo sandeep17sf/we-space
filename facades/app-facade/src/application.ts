@@ -26,7 +26,7 @@ import {
   SFCoreBindings,
 } from '@sourceloop/core';
 import * as openapi from './openapi.json';
-import compression from "compression";
+import compression from 'compression';
 export {ApplicationConfig};
 
 export class AppFacadeApplication extends BootMixin(
@@ -55,8 +55,8 @@ export class AppFacadeApplication extends BootMixin(
     super(options);
     this.component(CoreComponent);
     const expressMiddlewares =
-  this.getSync(SFCoreBindings.EXPRESS_MIDDLEWARES) ?? [];
-  expressMiddlewares.push(compression({level: 1, memLevel: 9));
+      this.getSync(SFCoreBindings.EXPRESS_MIDDLEWARES) ?? [];
+    expressMiddlewares.push(compression({level: 1, memLevel: 9}));
     // Set up the custom sequence
     this.sequence(ServiceSequence);
     // Add authentication component
@@ -92,7 +92,7 @@ export class AppFacadeApplication extends BootMixin(
     this.bind(SFCoreBindings.config).to({
       enableObf,
       obfPath: process.env.OBF_PATH ?? '/obf',
-      openapiSpec: openapi,
+      openapiSpec: openapi as Record<string,unknown>,
       authentication: authentication,
       swaggerUsername: process.env.SWAGGER_USER,
       swaggerPassword: process.env.SWAGGER_PASSWORD,

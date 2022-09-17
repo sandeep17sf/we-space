@@ -80,19 +80,7 @@ export class TodoApplication extends BootMixin(
       },
       servers: [{url: '/'}],
     });
-    // To check if monitoring is enabled from env or not
-    const enableObf = !!+(process.env.ENABLE_OBF ?? 0);
-    // To check if authorization is enabled for swagger stats or not
-    const authentication =
-      process.env.SWAGGER_USER && process.env.SWAGGER_PASSWORD ? true : false;
-    this.bind(SFCoreBindings.config).to({
-      enableObf,
-      obfPath: process.env.OBF_PATH ?? '/obf',
-      openapiSpec: openapi,
-      authentication: authentication,
-      swaggerUsername: process.env.SWAGGER_USER,
-      swaggerPassword: process.env.SWAGGER_PASSWORD,
-    });
+
     // Set up default home page
     this.static('/', path.join(__dirname, '../public'));
 
@@ -101,7 +89,19 @@ export class TodoApplication extends BootMixin(
       path: '/explorer',
     });
     this.component(RestExplorerComponent);
-
+    //To check if monitoring is enabled from env or not
+    const enableObf = !!+(process.env.ENABLE_OBF ?? 0);
+    // To check if authorization is enabled for swagger stats or not
+    const authentication =
+      process.env.SWAGGER_USER && process.env.SWAGGER_PASSWORD ? true : false;
+    this.bind(SFCoreBindings.config).to({
+      enableObf,
+      obfPath: process.env.OBF_PATH ?? '/obf',
+      openapiSpec: openapi as Record<string, unknown>,
+      authentication: authentication,
+      swaggerUsername: process.env.SWAGGER_USER,
+      swaggerPassword: process.env.SWAGGER_PASSWORD,
+    });
     this.projectRoot = __dirname;
     // Customize @loopback/boot Booter Conventions here
     this.bootOptions = {
