@@ -39,7 +39,8 @@
     "clean": "lb-clean dist *.tsbuildinfo .eslintcache",
     "rebuild": "yarn run clean && yarn run build",
     "symlink-resolver": "symlink-resolver",
-    "resolve-links": "npm run symlink-resolver build ./node_modules/@local"
+    "resolve-links": "npm run symlink-resolver build ./node_modules/@local",
+    "coverage": "nyc npm run test"
   },
   "repository": {
     "type": "git",
@@ -78,12 +79,14 @@
     "tslib": "^2.0.0"
   },
   "devDependencies": {
+    "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@loopback/build": "^9.0.2",
     "@loopback/eslint-config": "^13.0.2",
     "@loopback/testlab": "^5.0.2",
     "@types/dotenv": "^8.2.0",
     "@types/node": "^14.18.21",
     "eslint": "^8.19.0",
+    "nyc": "^15.1.0",
     "source-map-support": "^0.5.21",
     "symlink-resolver": "^0.2.1",
     "typescript": "~4.7.4"
