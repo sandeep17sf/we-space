@@ -1,0 +1,23 @@
+{
+    "defaultEnv": "master",
+    "master": {
+      "driver": "pg",
+      "host": {
+        "ENV": "NOTIFY_DB_HOST"
+      },
+      "port": {
+        "ENV": "NOTIFY_DB_PORT"
+      },
+      "user": {
+        "ENV": "NOTIFY_DB_USER"
+      },
+      "password": {
+        "ENV": "NOTIFY_DB_PASSWORD"
+      },
+      "database": {
+        "ENV": "NOTIFY_DB_DATABASE"
+      }
+    },
+    "sql-file": true
+  }
+  

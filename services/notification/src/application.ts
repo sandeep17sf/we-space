@@ -1,13 +1,22 @@
 import {BootMixin} from '@loopback/boot';
 import {ApplicationConfig} from '@loopback/core';
+import {RepositoryMixin} from '@loopback/repository';
+import {RestApplication} from '@loopback/rest';
 import {
   RestExplorerBindings,
   RestExplorerComponent,
 } from '@loopback/rest-explorer';
-import {RepositoryMixin} from '@loopback/repository';
-import {RestApplication} from '@loopback/rest';
 import {ServiceMixin} from '@loopback/service-proxy';
-import path from 'path';
+import {
+  BearerVerifierBindings,
+  BearerVerifierComponent,
+  BearerVerifierConfig,
+  BearerVerifierType,
+  CoreComponent,
+  SECURITY_SCHEME_SPEC,
+  ServiceSequence,
+  SFCoreBindings,
+} from '@sourceloop/core';
 import * as dotenv from 'dotenv';
 import * as dotenvExt from 'dotenv-extended';
 import {AuthenticationComponent} from 'loopback4-authentication';
@@ -15,20 +24,12 @@ import {
   AuthorizationBindings,
   AuthorizationComponent,
 } from 'loopback4-authorization';
-import {
-  CoreComponent,
-  ServiceSequence,
-  SECURITY_SCHEME_SPEC,
-  BearerVerifierBindings,
-  BearerVerifierComponent,
-  BearerVerifierConfig,
-  BearerVerifierType,
-  SFCoreBindings,
-} from '@sourceloop/core';
+import path from 'path';
 import * as openapi from './openapi.json';
+import { NotificationServiceComponent }  from "@sourceloop/notification-service"
 export {ApplicationConfig};
 
-export class TodoApplication extends BootMixin(
+export class NotificatonApplication extends BootMixin(
   ServiceMixin(RepositoryMixin(RestApplication)),
 ) {
   constructor(options: ApplicationConfig = {}) {
@@ -55,6 +56,7 @@ export class TodoApplication extends BootMixin(
     this.component(CoreComponent);
     // Set up the custom sequence
     this.sequence(ServiceSequence);
+    this.component(NotificationServiceComponent);
     // Add authentication component
     this.component(AuthenticationComponent);
     // Add bearer verifier component
@@ -71,7 +73,7 @@ export class TodoApplication extends BootMixin(
     this.api({
       openapi: '3.0.0',
       info: {
-        title: 'todo',
+        title: 'notificaton',
         version: '1.0.0',
       },
       paths: {},
@@ -97,7 +99,7 @@ export class TodoApplication extends BootMixin(
     this.bind(SFCoreBindings.config).to({
       enableObf,
       obfPath: process.env.OBF_PATH ?? '/obf',
-      openapiSpec: openapi,
+      openapiSpec: openapi as Record<string, unknown>,
       authentication: authentication,
       swaggerUsername: process.env.SWAGGER_USER,
       swaggerPassword: process.env.SWAGGER_PASSWORD,
