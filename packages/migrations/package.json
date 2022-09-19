@@ -14,7 +14,7 @@
     "url": ""
   },
   "scripts": {
-    "db:migrate:auth": "db-migrate up --config ./authentication/database.json -m ./authentication/migrations --dry-run",
+    "db:migrate:auth": "db-migrate up --config ./authentication/database.json -m ./authentication/migrations",
     "db:migrate-down:auth": "db-migrate down --config ./authentication/database.json -m ./authentication/migrations",
     "db:migrate-reset:auth": "db-migrate reset --config ./authentication/database.json -m ./authentication/migrations",
     "db:migrate": "run-s db:migrate:*",

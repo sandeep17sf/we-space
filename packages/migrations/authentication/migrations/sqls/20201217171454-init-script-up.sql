@@ -1,3 +1,4 @@
+DROP SCHEMA IF EXISTS main CASCADE;
 CREATE SCHEMA main;
 
 SET search_path TO main,public;
@@ -20,7 +21,22 @@ CREATE TABLE main.auth_clients (
 	CONSTRAINT pk_auth_clients_id PRIMARY KEY ( id )
  );
 
- CREATE TABLE main.roles (
+CREATE TABLE main.groups (
+	id                   uuid DEFAULT md5(random()::text || clock_timestamp()::text)::uuid NOT NULL ,
+	name                 varchar(200)  NOT NULL ,
+	description          varchar(500)   ,
+	photo_url            varchar(500)   ,
+	created_by           uuid   ,
+	modified_by          uuid   ,
+	created_on           timestamptz DEFAULT CURRENT_TIMESTAMP  ,
+	modified_on          timestamptz DEFAULT CURRENT_TIMESTAMP  ,
+	deleted              bool DEFAULT false  ,
+	deleted_on           timestamptz   ,
+	deleted_by           uuid   ,
+	CONSTRAINT pk_groups_id PRIMARY KEY ( id )
+ );
+
+CREATE TABLE main.roles (
 	id                   uuid DEFAULT md5(random()::text || clock_timestamp()::text)::uuid NOT NULL ,
 	name                 varchar(100)  NOT NULL ,
 	created_on           timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL ,
@@ -29,25 +45,11 @@ CREATE TABLE main.auth_clients (
 	modified_by          uuid   ,
 	deleted              bool DEFAULT false NOT NULL ,
 	permissions          _text   ,
+	allowed_clients      _text   ,
 	role_type            integer DEFAULT 0 NOT NULL ,
 	deleted_by           uuid   ,
 	deleted_on           timestamptz   ,
 	CONSTRAINT pk_roles_id PRIMARY KEY ( id )
- );
-
- CREATE TABLE main.tenant_configs (
-	id                   uuid DEFAULT md5(random()::text || clock_timestamp()::text)::uuid NOT NULL ,
-	config_key           varchar(100)  NOT NULL ,
-	config_value         jsonb  NOT NULL ,
-	created_on           timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL ,
-	modified_on          timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL ,
-	created_by           integer   ,
-	modified_by          integer   ,
-	deleted              bool DEFAULT false NOT NULL ,
-	tenant_id            uuid  NOT NULL ,
-	deleted_by           uuid   ,
-	deleted_on           timestamptz   ,
-	CONSTRAINT pk_tenant_configs_id PRIMARY KEY ( id )
  );
 
 CREATE TABLE main.tenants (
@@ -71,6 +73,45 @@ CREATE TABLE main.tenants (
 	CONSTRAINT idx_tenants UNIQUE ( "key" )
  );
 
+CREATE TABLE main.users (
+	id                   uuid DEFAULT md5(random()::text || clock_timestamp()::text)::uuid NOT NULL ,
+	first_name           varchar(50)  NOT NULL ,
+	middle_name          varchar(50)   ,
+	last_name            varchar(50)   ,
+	username             varchar(150)  NOT NULL ,
+	email                varchar(150)   ,
+	phone                varchar(15)   ,
+	created_on           timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL ,
+	modified_on          timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL ,
+	created_by           uuid   ,
+	modified_by          uuid   ,
+	deleted              bool DEFAULT false NOT NULL ,
+	last_login           timestamptz   ,
+	photo_url            varchar(250)   ,
+	auth_client_ids      integer[]   ,
+	gender               char(1)   ,
+	dob                  date   ,
+	designation          varchar(50)   ,
+	default_tenant_id    uuid   ,
+	deleted_by           uuid   ,
+	deleted_on           timestamptz   ,
+	CONSTRAINT pk_users_id PRIMARY KEY ( id )
+ );
+
+CREATE TABLE main.tenant_configs (
+	id                   uuid DEFAULT md5(random()::text || clock_timestamp()::text)::uuid NOT NULL ,
+	config_key           varchar(100)  NOT NULL ,
+	config_value         jsonb  NOT NULL ,
+	created_on           timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL ,
+	modified_on          timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL ,
+	created_by           integer   ,
+	modified_by          integer   ,
+	deleted              bool DEFAULT false NOT NULL ,
+	tenant_id            uuid  NOT NULL ,
+	deleted_by           uuid   ,
+	deleted_on           timestamptz   ,
+	CONSTRAINT pk_tenant_configs_id PRIMARY KEY ( id )
+ );
 
 CREATE TABLE main.user_credentials (
 	id                   uuid DEFAULT md5(random()::text || clock_timestamp()::text)::uuid NOT NULL ,
@@ -88,38 +129,6 @@ CREATE TABLE main.user_credentials (
 	CONSTRAINT idx_user_credentials_user_id UNIQUE ( user_id )
  );
 
- CREATE TABLE main.user_permissions (
-	id                   uuid DEFAULT md5(random()::text || clock_timestamp()::text)::uuid NOT NULL ,
-	user_tenant_id       uuid  NOT NULL ,
-	permission           varchar(50)  NOT NULL ,
-	allowed              bool  NOT NULL ,
-	created_on           timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL ,
-	modified_on          timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL ,
-	created_by           uuid   ,
-	modified_by          uuid   ,
-	deleted              bool DEFAULT false NOT NULL ,
-	deleted_on           timestamptz   ,
-	deleted_by           uuid   ,
-	CONSTRAINT pk_user_permissions_id PRIMARY KEY ( id )
- );
-
-CREATE  TABLE main.user_resources ( 
-	deleted              bool DEFAULT false NOT NULL ,
-	deleted_on           timestamptz   ,
-	deleted_by           uuid   ,
-	created_on           timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL ,
-	modified_on          timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL ,
-	created_by           uuid   ,
-	modified_by          uuid   ,
-	id                   uuid DEFAULT md5(random()::text || clock_timestamp()::text)::uuid NOT NULL ,
-	user_tenant_id       uuid ,
-	resource_name        varchar(50)   ,
-	resource_value       varchar(100)   ,
-	allowed              bool DEFAULT true NOT NULL ,
-	CONSTRAINT user_resources_pkey PRIMARY KEY ( id )
- );
-
-
 CREATE TABLE main.user_tenants (
 	id                   uuid DEFAULT md5(random()::text || clock_timestamp()::text)::uuid NOT NULL ,
 	user_id              uuid  NOT NULL ,
@@ -135,32 +144,34 @@ CREATE TABLE main.user_tenants (
 	CONSTRAINT pk_user_tenants_id PRIMARY KEY ( id )
  );
 
-
-CREATE TABLE main.users (
+CREATE TABLE main.user_groups (
 	id                   uuid DEFAULT md5(random()::text || clock_timestamp()::text)::uuid NOT NULL ,
-	first_name           varchar(50)  NOT NULL ,
-	middle_name          varchar(50)   ,
-	last_name            varchar(50)   ,
-	username             varchar(150)  NOT NULL ,
-	email                varchar(150)   ,
-	phone                varchar(15)   ,
+	user_tenant_id       uuid  NOT NULL ,
+	group_id             uuid  NOT NULL ,
+	created_on           timestamptz DEFAULT CURRENT_TIMESTAMP  ,
+	modified_on          timestamptz DEFAULT CURRENT_TIMESTAMP  ,
+	deleted              bool DEFAULT false  ,
+	created_by           uuid   ,
+	modified_by          uuid   ,
+	deleted_on           timestamptz   ,
+	deleted_by           uuid   ,
+	CONSTRAINT pk_user_groups_id PRIMARY KEY ( id )
+ );
+
+CREATE TABLE main.user_permissions (
+	id                   uuid DEFAULT md5(random()::text || clock_timestamp()::text)::uuid NOT NULL ,
+	user_tenant_id       uuid  NOT NULL ,
+	permission           varchar(50)  NOT NULL ,
+	allowed              bool  NOT NULL ,
 	created_on           timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL ,
 	modified_on          timestamptz DEFAULT CURRENT_TIMESTAMP NOT NULL ,
 	created_by           uuid   ,
 	modified_by          uuid   ,
 	deleted              bool DEFAULT false NOT NULL ,
-	last_login           timestamptz   ,
-	auth_client_ids      integer[]   ,
-	gender               char(1)   ,
-	dob                  date   ,
-	default_tenant_id    uuid   ,
-	deleted_by           uuid   ,
 	deleted_on           timestamptz   ,
-	CONSTRAINT pk_users_id PRIMARY KEY ( id )
+	deleted_by           uuid   ,
+	CONSTRAINT pk_user_permissions_id PRIMARY KEY ( id )
  );
-
-
-
 
 CREATE OR REPLACE FUNCTION main.moddatetime()
  RETURNS trigger
@@ -193,9 +204,11 @@ ALTER TABLE main.tenant_configs ADD CONSTRAINT fk_tenant_configs_tenants FOREIGN
 
 ALTER TABLE main.user_credentials ADD CONSTRAINT fk_user_credentials_users FOREIGN KEY ( user_id ) REFERENCES main.users( id );
 
-ALTER TABLE main.user_permissions ADD CONSTRAINT fk_user_permissions FOREIGN KEY ( user_tenant_id ) REFERENCES main.user_tenants( id );
+ALTER TABLE main.user_groups ADD CONSTRAINT fk_user_tenant FOREIGN KEY ( user_tenant_id ) REFERENCES main.user_tenants( id );
 
-ALTER TABLE main.user_resources ADD CONSTRAINT fk_user_resources FOREIGN KEY ( user_tenant_id ) REFERENCES main.user_tenants( id );
+ALTER TABLE main.user_groups ADD CONSTRAINT fk_groups FOREIGN KEY ( group_id ) REFERENCES main.groups( id );
+
+ALTER TABLE main.user_permissions ADD CONSTRAINT fk_user_permissions FOREIGN KEY ( user_tenant_id ) REFERENCES main.user_tenants( id );
 
 ALTER TABLE main.user_tenants ADD CONSTRAINT fk_user_tenants_users FOREIGN KEY ( user_id ) REFERENCES main.users( id );
 

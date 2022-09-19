@@ -28,6 +28,7 @@ import {
 } from '@sourceloop/core';
 import { GoogleOauth2SignupProvider } from './providers';
 import * as openapi from './openapi.json';
+import { MySequence } from './sequence';
 export {ApplicationConfig};
 
 export class AuthenticationApplication extends BootMixin(
@@ -57,25 +58,13 @@ export class AuthenticationApplication extends BootMixin(
    
     this.component(CoreComponent);
     // Set up the custom sequence
-    this.sequence(ServiceSequence);
+    this.sequence(MySequence);
     // Add authentication component
-    this.component(AuthenticationComponent);
+    // this.component(AuthenticationComponent);
     this.component(AuthenticationServiceComponent);
     this.bind(SignUpBindings.GOOGLE_SIGN_UP_PROVIDER).toProvider(
       GoogleOauth2SignupProvider,
     );
-    // Add bearer verifier component
-    this.bind(BearerVerifierBindings.Config).to({
-      authServiceUrl: '',
-      type: BearerVerifierType.service,
-    } as BearerVerifierConfig);
-    this.component(BearerVerifierComponent);
-    // Add authorization component
-    this.bind(AuthorizationBindings.CONFIG).to({
-      allowAlwaysPaths: ['/explorer', '/openapi.json'],
-    });
-    this.component(AuthorizationComponent);
-
     // Set up default home page
     this.static('/', path.join(__dirname, '../public'));
 

@@ -4,12 +4,10 @@ import {HttpErrors} from '@loopback/rest';
 import {
   AuthClientRepository,
   GoogleSignUpFn,
-  RoleRepository,
-  TenantRepository,
   User,
   UserRelations,
-  UserRepository,
 } from '@sourceloop/authentication-service';
+import { RoleRepository, TenantRepository, UserRepository } from '../repositories';
 
 export class GoogleOauth2SignupProvider implements Provider<GoogleSignUpFn> {
   constructor(
@@ -38,7 +36,7 @@ export class GoogleOauth2SignupProvider implements Provider<GoogleSignUpFn> {
         }),
         this.authClientRepo.findOne({
           where: {
-            clientId: 'test_client_id',
+            clientId: 'temp_client',
           },
         }),
       ]);
@@ -53,7 +51,13 @@ export class GoogleOauth2SignupProvider implements Provider<GoogleSignUpFn> {
       if (userExists) {
         throw new HttpErrors.BadRequest('User already exists');
       }
-
+      console.log({
+        firstName: profile.name.givenName,
+        lastName: profile.name.familyName,
+        username: profile._json.email,
+        email: profile._json.email,
+        defaultTenantId: tenant?.id,
+        authClientIds: `{${client?.id}}`})
       const user = await this.userRepo.createWithoutPassword({
         firstName: profile.name.givenName,
         lastName: profile.name.familyName,
@@ -62,13 +66,21 @@ export class GoogleOauth2SignupProvider implements Provider<GoogleSignUpFn> {
         defaultTenantId: tenant?.id,
         authClientIds: `{${client?.id}}`,
       });
-
+      console.log({
+        userId: user.id,
+        authProvider: 'google',
+        authId: profile.id,
+      })
       await this.userRepo.credentials(user.id).create({
         userId: user.id,
         authProvider: 'google',
         authId: profile.id,
       });
-
+      console.log({
+        userId: user.id,
+        tenantId: tenant?.id,
+        roleId: role?.id,
+      })
       await this.userRepo.userTenants(user.id).create({
         userId: user.id,
         tenantId: tenant?.id,
