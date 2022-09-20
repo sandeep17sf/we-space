@@ -27,6 +27,12 @@ import {
 import path from 'path';
 import * as openapi from './openapi.json';
 import { NotificationServiceComponent }  from "@sourceloop/notification-service"
+import {
+  SocketBindings,
+  SocketConfig,
+  SocketIOProvider
+} from 'loopback4-notifications/socketio';
+import { NotificationBindings } from 'loopback4-notifications';
 export {ApplicationConfig};
 
 export class NotificatonApplication extends BootMixin(
@@ -56,6 +62,10 @@ export class NotificatonApplication extends BootMixin(
     this.component(CoreComponent);
     // Set up the custom sequence
     this.sequence(ServiceSequence);
+    this.bind(SocketBindings.Config).to({
+      url: process.env.SOCKETIO_SERVER_URL ?? ""
+    } as SocketConfig);
+    this.bind(NotificationBindings.PushProvider).toProvider(SocketIOProvider);
     this.component(NotificationServiceComponent);
     // Add authentication component
     this.component(AuthenticationComponent);
@@ -99,7 +109,7 @@ export class NotificatonApplication extends BootMixin(
     this.bind(SFCoreBindings.config).to({
       enableObf,
       obfPath: process.env.OBF_PATH ?? '/obf',
-      openapiSpec: openapi as Record<string, unknown>,
+      openapiSpec: openapi,
       authentication: authentication,
       swaggerUsername: process.env.SWAGGER_USER,
       swaggerPassword: process.env.SWAGGER_PASSWORD,
