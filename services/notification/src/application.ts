@@ -29,7 +29,6 @@ import * as openapi from './openapi.json';
 import { NotificationServiceComponent }  from "@sourceloop/notification-service"
 import {
   SocketBindings,
-  SocketConfig,
   SocketIOProvider
 } from 'loopback4-notifications/socketio';
 import { NotificationBindings } from 'loopback4-notifications';
@@ -63,8 +62,10 @@ export class NotificatonApplication extends BootMixin(
     // Set up the custom sequence
     this.sequence(ServiceSequence);
     this.bind(SocketBindings.Config).to({
-      url: process.env.SOCKETIO_SERVER_URL ?? ""
-    } as SocketConfig);
+      url: process.env.SOCKETIO_SERVER_URL ?? "",
+      defaultPath: 'general-message',
+      options: {},
+    });
     this.bind(NotificationBindings.PushProvider).toProvider(SocketIOProvider);
     this.component(NotificationServiceComponent);
     // Add authentication component

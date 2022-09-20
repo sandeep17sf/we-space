@@ -62,12 +62,13 @@ export class AppFacadeApplication extends BootMixin(
     this.bind(BearerVerifierBindings.Config).to({
       type: BearerVerifierType.facade,
     } as BearerVerifierConfig);
+    
     this.component(BearerVerifierComponent);
     this.bind(AuthorizationBindings.CONFIG).to({
       allowAlwaysPaths: ['/explorer'],
     });
     this.component(AuthorizationComponent);
-  
+
     this.projectRoot = __dirname;
     // Customize @loopback/boot Booter Conventions here
     this.bootOptions = {

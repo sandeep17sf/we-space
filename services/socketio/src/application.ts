@@ -18,6 +18,9 @@ export class SocketIoExampleApplication extends BootMixin(SocketIoApplication) {
       errorOnMissing: true,
       includeProcessEnv: true,
     });
+    const port = 3000;
+    options.httpServerOptions = options.httpServerOptions ?? {};
+    options.httpServerOptions.port = +(process.env.PORT ?? port);
     super(options);
 
     this.projectRoot = __dirname;

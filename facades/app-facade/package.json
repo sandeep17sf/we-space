@@ -35,7 +35,7 @@
     "migrate": "node ./dist/migrate",
     "openapi-spec": "node ./dist/openapi-spec",
     "prestart": "npm run rebuild && npm run openapi-spec",
-    "dev": "nodemon -e yarn start",
+    "dev": "nodemon",
     "start": "node -r ./dist/opentelemetry-registry.js -r source-map-support/register .",
     "clean": "lb-clean dist *.tsbuildinfo .eslintcache",
     "rebuild": "yarn run clean && yarn run build",
