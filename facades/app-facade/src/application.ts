@@ -43,7 +43,8 @@ export class AppFacadeApplication extends BootMixin(
       },
     });
     this.component(CoreComponent);
-    const expressMiddlewares = this.getSync(SFCoreBindings.EXPRESS_MIDDLEWARES) ?? [];
+    const expressMiddlewares =
+      this.getSync(SFCoreBindings.EXPRESS_MIDDLEWARES) ?? [];
     expressMiddlewares.push(compression({level: 1, memLevel: 9}));
     // Set up the custom sequence
     this.sequence(SecureSequence);
@@ -62,12 +63,11 @@ export class AppFacadeApplication extends BootMixin(
       type: BearerVerifierType.facade,
     } as BearerVerifierConfig);
     this.component(BearerVerifierComponent);
-
     this.bind(AuthorizationBindings.CONFIG).to({
       allowAlwaysPaths: ['/explorer'],
     });
     this.component(AuthorizationComponent);
-
+  
     this.projectRoot = __dirname;
     // Customize @loopback/boot Booter Conventions here
     this.bootOptions = {
@@ -78,5 +78,5 @@ export class AppFacadeApplication extends BootMixin(
         nested: true,
       },
     };
-  } 
+  }
 }

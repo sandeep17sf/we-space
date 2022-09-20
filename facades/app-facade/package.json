@@ -35,6 +35,7 @@
     "migrate": "node ./dist/migrate",
     "openapi-spec": "node ./dist/openapi-spec",
     "prestart": "npm run rebuild && npm run openapi-spec",
+    "dev": "nodemon -e yarn start",
     "start": "node -r ./dist/opentelemetry-registry.js -r source-map-support/register .",
     "clean": "lb-clean dist *.tsbuildinfo .eslintcache",
     "rebuild": "yarn run clean && yarn run build",
@@ -54,6 +55,17 @@
     "src",
     "!*/__tests__"
   ],
+  "nodemonConfig": {
+    "verbose": true,
+    "watch": [
+      "src/"
+    ],
+    "ignore": [
+      "dist/*"
+    ],
+    "ext": "ts",
+    "exec": "yarn start"
+  },
   "dependencies": {
     "@loopback/boot": "^5.0.2",
     "@loopback/core": "^4.0.2",
@@ -89,6 +101,7 @@
     "@types/node": "^14.18.21",
     "compression": "^1.7.4",
     "eslint": "^8.19.0",
+    "nodemon": "^2.0.20",
     "nyc": "^15.1.0",
     "source-map-support": "^0.5.21",
     "symlink-resolver": "^0.2.1",
