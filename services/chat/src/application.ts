@@ -8,10 +8,6 @@ import {
 } from '@loopback/rest-explorer';
 import {ServiceMixin} from '@loopback/service-proxy';
 import {
-  BearerVerifierBindings,
-  BearerVerifierComponent,
-  BearerVerifierConfig,
-  BearerVerifierType,
   CoreComponent,
   SECURITY_SCHEME_SPEC,
   ServiceSequence,
@@ -19,10 +15,8 @@ import {
 } from '@sourceloop/core';
 import * as dotenv from 'dotenv';
 import * as dotenvExt from 'dotenv-extended';
-import {AuthenticationComponent} from 'loopback4-authentication';
 import {
   AuthorizationBindings,
-  AuthorizationComponent,
 } from 'loopback4-authorization';
 import path from 'path';
 import {ChatServiceComponent} from '@sourceloop/chat-service';
@@ -58,24 +52,15 @@ export class ChatApplication extends BootMixin(
     this.sequence(ServiceSequence);
     // add Component for ChatService
     this.component(ChatServiceComponent);
-    // Add authentication component
-    this.component(AuthenticationComponent);
-    // Add bearer verifier component
-    this.bind(BearerVerifierBindings.Config).to({
-      authServiceUrl: '',
-      type: BearerVerifierType.service,
-    } as BearerVerifierConfig);
-    this.component(BearerVerifierComponent);
-    // Add authorization component
+
     this.bind(AuthorizationBindings.CONFIG).to({
       allowAlwaysPaths: ['/explorer', '/openapi.json'],
     });
-    this.component(AuthorizationComponent);
 
     this.api({
       openapi: '3.0.0',
       info: {
-        title: 'chat',
+        title: 'chat service',
         version: '1.0.0',
       },
       paths: {},
