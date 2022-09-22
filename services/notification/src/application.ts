@@ -1,38 +1,18 @@
-import {BootMixin} from '@loopback/boot';
-import {ApplicationConfig} from '@loopback/core';
-import {RepositoryMixin} from '@loopback/repository';
-import {RestApplication} from '@loopback/rest';
-import {
-  RestExplorerBindings,
-  RestExplorerComponent,
-} from '@loopback/rest-explorer';
-import {ServiceMixin} from '@loopback/service-proxy';
-import {
-  BearerVerifierBindings,
-  BearerVerifierComponent,
-  BearerVerifierConfig,
-  BearerVerifierType,
-  CoreComponent,
-  SECURITY_SCHEME_SPEC,
-  ServiceSequence,
-  SFCoreBindings,
-} from '@sourceloop/core';
+import { BootMixin } from '@loopback/boot';
+import { ApplicationConfig } from '@loopback/core';
+import { RepositoryMixin } from '@loopback/repository';
+import { RestApplication } from '@loopback/rest';
+import { RestExplorerBindings, RestExplorerComponent } from '@loopback/rest-explorer';
+import { ServiceMixin } from '@loopback/service-proxy';
+import { NotificationServiceComponent, NotifServiceBindings } from '@sourceloop/notification-service';
 import * as dotenv from 'dotenv';
 import * as dotenvExt from 'dotenv-extended';
-import {AuthenticationComponent} from 'loopback4-authentication';
-import {
-  AuthorizationBindings,
-  AuthorizationComponent,
-} from 'loopback4-authorization';
-import path from 'path';
-import * as openapi from './openapi.json';
-import { NotificationServiceComponent, NotifServiceBindings }  from "@sourceloop/notification-service"
-import {
-  SocketBindings,
-  SocketIOProvider
-} from 'loopback4-notifications/socketio';
 import { NotificationBindings } from 'loopback4-notifications';
+import { SocketBindings, SocketIOProvider } from 'loopback4-notifications/socketio';
+import path from 'path';
+
 import { MySequence } from './sequence';
+
 export {ApplicationConfig};
 
 export class NotificatonApplication extends BootMixin(

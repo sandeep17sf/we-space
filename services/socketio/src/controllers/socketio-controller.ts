@@ -98,7 +98,7 @@ export class SocketIoController {
       sentDate: Date;
       options?: JSONObject;
     } = JSON.parse(msg);
-
+    console.log(msg)
     if (parsedMsg?.receiver?.to?.length > 0) {
       parsedMsg.receiver.to.forEach(item =>
         this.socket.nsp.to(item.id).emit('userNotif', {

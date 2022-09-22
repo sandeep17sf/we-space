@@ -11,7 +11,6 @@ import {
   ListItemText,
   Paper,
   TextField,
-  Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useAuth } from "../hooks";
