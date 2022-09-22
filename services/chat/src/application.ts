@@ -8,9 +8,7 @@ import {
 } from '@loopback/rest-explorer';
 import {ServiceMixin} from '@loopback/service-proxy';
 import {
-  CoreComponent,
   SECURITY_SCHEME_SPEC,
-  ServiceSequence,
   SFCoreBindings,
 } from '@sourceloop/core';
 import * as dotenv from 'dotenv';
@@ -21,6 +19,7 @@ import {
 import path from 'path';
 import {ChatServiceComponent} from '@sourceloop/chat-service';
 import * as openapi from './openapi.json';
+import { MySequence } from './sequence';
 export {ApplicationConfig};
 
 export class ChatApplication extends BootMixin(
@@ -47,9 +46,8 @@ export class ChatApplication extends BootMixin(
       },
     };
     super(options);
-    this.component(CoreComponent);
     // Set up the custom sequence
-    this.sequence(ServiceSequence);
+    this.sequence(MySequence);
     // add Component for ChatService
     this.component(ChatServiceComponent);
 

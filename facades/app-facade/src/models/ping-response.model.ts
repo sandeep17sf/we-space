@@ -49,6 +49,7 @@ export class PingResponse {
   additionalProperties: true,
 }})
   headers?: {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   'Content-Type'?: string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [additionalProperty: string]: any;

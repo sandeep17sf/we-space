@@ -32,6 +32,7 @@
     "preopenapi-spec": "yarn run build",
     "openapi-spec": "node ./dist/openapi-spec",
     "prestart": "yarn run rebuild",
+    "dev": "nodemon",
     "start": "node -r source-map-support/register .",
     "clean": "lb-clean dist *.tsbuildinfo .eslintcache",
     "rebuild": "yarn run clean && yarn run build"
@@ -48,6 +49,17 @@
     "src",
     "!*/__tests__"
   ],
+  "nodemonConfig": {
+    "verbose": true,
+    "watch": [
+      "src/"
+    ],
+    "ignore": [
+      "dist/*"
+    ],
+    "ext": "ts",
+    "exec": "yarn start"
+  },
   "dependencies": {
     "@loopback/boot": "^5.0.2",
     "@loopback/core": "^4.0.2",
@@ -72,6 +84,7 @@
     "loopback-connector-postgresql": "^5.0.1",
     "loopback4-authentication": "^7.0.1",
     "loopback4-authorization": "^5.0.7",
+    "nodemon": "^2.0.20",
     "prom-client": "^14.1.0",
     "swagger-stats": "^0.99.2",
     "tslib": "^2.0.0"

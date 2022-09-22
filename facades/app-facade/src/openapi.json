@@ -1,6 +1,178 @@
 {
   "openapi": "3.0.0",
   "paths": {
+    "/messages/{messageid}/markAsRead": {
+      "patch": {
+        "x-controller-name": "PubnubMessageController",
+        "x-operation-name": "patchMessageRecipients",
+        "tags": [
+          "PubnubMessageController"
+        ],
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Message PATCH success count",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/loopback.Count"
+                }
+              }
+            }
+          }
+        },
+        "description": "\n\n| Permissions |\n| ------- |\n| UpdateMessageRecipient   |\n",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "messageid",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "where",
+            "in": "query",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "SocketMessageRecipient.WhereFilter",
+                  "additionalProperties": true,
+                  "x-typescript-type": "@loopback/repository#Where<SocketMessageRecipient>"
+                }
+              }
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SocketMessageRecipientPartial"
+              }
+            }
+          },
+          "x-parameter-index": 2
+        },
+        "operationId": "PubnubMessageController.patchMessageRecipients"
+      }
+    },
+    "/messages": {
+      "post": {
+        "x-controller-name": "PubnubMessageController",
+        "x-operation-name": "create",
+        "tags": [
+          "PubnubMessageController"
+        ],
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Message model instance",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SocketMessage"
+                }
+              }
+            }
+          }
+        },
+        "description": "\n\n| Permissions |\n| ------- |\n| CreateMessage   |\n",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Message"
+              }
+            }
+          },
+          "x-parameter-index": 1
+        },
+        "operationId": "PubnubMessageController.create"
+      },
+      "get": {
+        "x-controller-name": "PubnubMessageController",
+        "x-operation-name": "find",
+        "tags": [
+          "PubnubMessageController"
+        ],
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of Message model instances",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SocketMessageWithRelations"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "\n\n| Permissions |\n| ------- |\n| ViewMessage   |\n",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ChannelID",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SocketMessage.Filter"
+                }
+              }
+            }
+          }
+        ],
+        "operationId": "PubnubMessageController.find"
+      }
+    },
     "/ping": {
       "get": {
         "x-controller-name": "PingController",
@@ -22,6 +194,41 @@
           }
         },
         "operationId": "PingController.ping"
+      }
+    },
+    "/userTenantId": {
+      "get": {
+        "x-controller-name": "PubnubMessageController",
+        "x-operation-name": "me",
+        "tags": [
+          "PubnubMessageController"
+        ],
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "To get the userTenantId",
+            "content": {
+              "text/plain": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "description": "",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "operationId": "PubnubMessageController.me"
       }
     },
     "/": {
@@ -66,6 +273,219 @@
       }
     },
     "schemas": {
+      "SocketMessageWithRelations": {
+        "title": "SocketMessageWithRelations",
+        "type": "object",
+        "description": "(tsType: SocketMessageWithRelations, schemaOptions: { includeRelations: true })",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "toUserId": {
+            "type": "string"
+          },
+          "channelId": {
+            "type": "string"
+          },
+          "channelType": {
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "body",
+          "channelId",
+          "channelType"
+        ],
+        "additionalProperties": true,
+        "x-typescript-type": "SocketMessageWithRelations"
+      },
+      "SocketMessage": {
+        "title": "SocketMessage",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "toUserId": {
+            "type": "string"
+          },
+          "channelId": {
+            "type": "string"
+          },
+          "channelType": {
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "body",
+          "channelId",
+          "channelType"
+        ],
+        "additionalProperties": true
+      },
+      "Message": {
+        "title": "Message",
+        "type": "object",
+        "description": "(tsType: Omit<SocketMessage, 'id'>, schemaOptions: { title: 'Message', exclude: [ 'id' ] })",
+        "properties": {
+          "subject": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "toUserId": {
+            "type": "string"
+          },
+          "channelId": {
+            "type": "string"
+          },
+          "channelType": {
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "body",
+          "channelId",
+          "channelType"
+        ],
+        "additionalProperties": true,
+        "x-typescript-type": "Omit<SocketMessage, 'id'>"
+      },
+      "SocketMessageRecipientPartial": {
+        "title": "SocketMessageRecipientPartial",
+        "type": "object",
+        "description": "(tsType: Partial<SocketMessageRecipient>, schemaOptions: { partial: true })",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "channelId": {
+            "type": "string"
+          },
+          "recipientId": {
+            "type": "string"
+          },
+          "messageId": {
+            "type": "string"
+          },
+          "isRead": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": true,
+        "x-typescript-type": "Partial<SocketMessageRecipient>"
+      },
+      "loopback.Count": {
+        "type": "object",
+        "title": "loopback.Count",
+        "x-typescript-type": "@loopback/repository#Count",
+        "properties": {
+          "count": {
+            "type": "number"
+          }
+        }
+      },
+      "SocketMessage.Filter": {
+        "type": "object",
+        "title": "SocketMessage.Filter",
+        "properties": {
+          "offset": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "example": 100
+          },
+          "skip": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "order": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ]
+          },
+          "where": {
+            "title": "SocketMessage.WhereFilter",
+            "type": "object",
+            "additionalProperties": true
+          },
+          "fields": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "boolean"
+                  },
+                  "subject": {
+                    "type": "boolean"
+                  },
+                  "body": {
+                    "type": "boolean"
+                  },
+                  "toUserId": {
+                    "type": "boolean"
+                  },
+                  "channelId": {
+                    "type": "boolean"
+                  },
+                  "channelType": {
+                    "type": "boolean"
+                  },
+                  "createdBy": {
+                    "type": "boolean"
+                  }
+                },
+                "additionalProperties": true
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "example": "id"
+                },
+                "uniqueItems": true
+              }
+            ],
+            "title": "SocketMessage.Fields"
+          }
+        },
+        "additionalProperties": false,
+        "x-typescript-type": "@loopback/repository#Filter<SocketMessage>"
+      },
       "PingResponse": {
         "type": "object",
         "title": "PingResponse",

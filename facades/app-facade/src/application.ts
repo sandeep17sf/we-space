@@ -42,12 +42,13 @@ export class AppFacadeApplication extends BootMixin(
         securitySchemes: SECURITY_SCHEME_SPEC,
       },
     });
+    // Set up the custom sequence
+    this.sequence(SecureSequence);
     this.component(CoreComponent);
     const expressMiddlewares =
       this.getSync(SFCoreBindings.EXPRESS_MIDDLEWARES) ?? [];
     expressMiddlewares.push(compression({level: 1, memLevel: 9}));
-    // Set up the custom sequence
-    this.sequence(SecureSequence);
+    
 
     // Set up default home page
     this.static('/', path.join(__dirname, '../public'));

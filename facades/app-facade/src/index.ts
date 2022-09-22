@@ -1,7 +1,8 @@
 import {ApplicationConfig, AppFacadeApplication} from './application';
-
+import * as dotenv from 'dotenv';
 export * from './application';
 
+dotenv.config()
 export async function main(options: ApplicationConfig = {}) {
   const app = new AppFacadeApplication(options);
   await app.boot();
