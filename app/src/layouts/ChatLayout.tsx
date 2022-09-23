@@ -25,6 +25,7 @@ const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const auth = useAuth();
   const user = auth?.user;
+  const userFullName = user?.firstName +" "+user?.lastName;
   const fetchMessages = async () => {
     let results = await getMessages();
     console.log(
@@ -39,8 +40,9 @@ const Chat = () => {
       "message_textarea"
     ) as HTMLInputElement;
     let messageText = textArea?.value ?? "";
+    if (!messageText.trim()) return;
     const messageResponse = await sendMessage({
-      body: messageText,
+      body: messageText.trim(),
       channelId: user?.defaultTenantId,
       channelType: "group",
     });
@@ -49,7 +51,7 @@ const Chat = () => {
         ...messages,
         ...formatMessages([messageResponse], user?.userTenantId),
       ];
-      setMessages(oldMessages)
+      setMessages(oldMessages);
       textArea.value = "";
     }
   };
@@ -59,17 +61,22 @@ const Chat = () => {
   }, []);
   return (
     <Container style={{ height: "100vh" }}>
-      <Grid container component={Paper} style={{ height: "100%" }}>
-        <Grid item xs={3}>
+      <Grid
+        className="chatSection"
+        container
+        component={Paper}
+        style={{ height: "100%" }}
+      >
+        <Grid item xs={3} className="borderRight500">
           <List>
             <ListItem button key="RemySharp">
               <ListItemIcon>
                 <Avatar
-                  alt="Remy Sharp"
-                  src="https://material-ui.com/static/images/avatar/1.jpg"
+                  alt={userFullName}
+                  src={"https://ui-avatars.com/api/?name="+userFullName}
                 />
               </ListItemIcon>
-              <ListItemText primary="John Wick"></ListItemText>
+              <ListItemText primary={user?.firstName +" "+user?.lastName}></ListItemText>
             </ListItem>
           </List>
           <Divider />
@@ -113,67 +120,58 @@ const Chat = () => {
             </ListItem>
           </List>
         </Grid>
-        <Grid item xs={9} style={{ flexGrow: 1 }}>
-          <Grid container direction={"column"} height={"100%"}>
-            <Grid item flex={1}>
-              <List>
-                {messages?.map((message) => {
-                  return (
-                    <ListItem key={message?.id}>
-                      <Grid container>
-                        <Grid item xs={12}>
-                          <ListItemText
-                            sx={{
-                              textAlign: message?.fromMe ? "right" : "left",
-                            }}
-                            primary={message.body}
-                          ></ListItemText>
-                        </Grid>
-                        <Grid item xs={12}>
-                          <ListItemText
-                            sx={{
-                              textAlign: message?.fromMe ? "right" : "left",
-                            }}
-                            secondary={new Date(
-                              message.createdOn
-                            ).toLocaleString("en-US", {
-                              hour: "numeric",
-                              minute: "numeric",
-                              hour12: true,
-                            })}
-                          ></ListItemText>
-                        </Grid>
-                      </Grid>
-                    </ListItem>
-                  );
-                })}
-              </List>
+        <Grid item xs={9}>
+          <List className="messageArea">
+            {messages?.map((message) => {
+              return (
+                <ListItem key={message?.id}>
+                  <Grid container>
+                    <Grid item xs={12}>
+                      <ListItemText
+                        sx={{
+                          textAlign: message?.fromMe ? "right" : "left",
+                        }}
+                        primary={message.body}
+                      ></ListItemText>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <ListItemText
+                        sx={{
+                          textAlign: message?.fromMe ? "right" : "left",
+                        }}
+                        secondary={new Date(message.createdOn).toLocaleString(
+                          "en-US",
+                          {
+                            hour: "numeric",
+                            minute: "numeric",
+                            hour12: true,
+                          }
+                        )}
+                      ></ListItemText>
+                    </Grid>
+                  </Grid>
+                </ListItem>
+              );
+            })}
+          </List>
+          <Divider />
+          <Grid container style={{ padding: "20px" }}>
+            <Grid item xs={11}>
+              <TextField
+                id="message_textarea"
+                label="Type Something"
+                fullWidth
+                onKeyPress={(key) => {
+                  if (key.code === "Enter") {
+                    handleSendMessage();
+                  }
+                }}
+              />
             </Grid>
-            <Grid item>
-              <Divider />
-              <Grid container style={{ padding: "20px" }}>
-                <Grid item xs={11}>
-                  <TextField
-                    id="message_textarea"
-                    label="Type Something"
-                    fullWidth
-                    onKeyPress={(key) => {
-                      if(key.code === "Enter"){
-                        handleSendMessage()
-                      }
-                    }}
-                  />
-                </Grid>
-                <Grid xs={1} textAlign="end">
-                  <Fab
-                    color="primary"
-                    aria-label="add"
-                    onClick={handleSendMessage}
-                  >
-                    <SendIcon />
-                  </Fab>
-                </Grid>
-              </Grid>
+            <Grid xs={1} textAlign="end">
+              <Fab color="primary" aria-label="add" onClick={handleSendMessage}>
+                <SendIcon />
+              </Fab>
             </Grid>
           </Grid>
         </Grid>

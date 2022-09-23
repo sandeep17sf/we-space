@@ -51,13 +51,7 @@ export class GoogleOauth2SignupProvider implements Provider<GoogleSignUpFn> {
       if (userExists) {
         throw new HttpErrors.BadRequest('User already exists');
       }
-      console.log({
-        firstName: profile.name.givenName,
-        lastName: profile.name.familyName,
-        username: profile._json.email,
-        email: profile._json.email,
-        defaultTenantId: tenant?.id,
-        authClientIds: `{${client?.id}}`})
+      
       const user = await this.userRepo.createWithoutPassword({
         firstName: profile.name.givenName,
         lastName: profile.name.familyName,
@@ -66,21 +60,11 @@ export class GoogleOauth2SignupProvider implements Provider<GoogleSignUpFn> {
         defaultTenantId: tenant?.id,
         authClientIds: `{${client?.id}}`,
       });
-      console.log({
-        userId: user.id,
-        authProvider: 'google',
-        authId: profile.id,
-      })
       await this.userRepo.credentials(user.id).create({
         userId: user.id,
         authProvider: 'google',
         authId: profile.id,
       });
-      console.log({
-        userId: user.id,
-        tenantId: tenant?.id,
-        roleId: role?.id,
-      })
       await this.userRepo.userTenants(user.id).create({
         userId: user.id,
         tenantId: tenant?.id,
